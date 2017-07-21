@@ -47,7 +47,7 @@
 %\beamersetaveragebackground{black!10}
 
 \setbeamercovered{transparent}
-%\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{navigation symbols}{}
 
 \usefonttheme{professionalfonts}
 \useinnertheme{circles}%{rectangles}
@@ -59,7 +59,7 @@
 %  \vbox{}
   \vfill
   \begin{centering}
-%   \includegraphics[height=2.0cm]{figures/ustc_logo_fig.pdf}
+  \includegraphics[height=2.0cm]{figure/hundsun-logo.png}
         \vskip0.6em\par%
     \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
       \usebeamerfont{title}\inserttitle\par%
@@ -71,10 +71,7 @@
     \end{beamercolorbox}%
     \vskip1em\par
     \begin{beamercolorbox}[sep=8pt,center]{author}
-      \usebeamerfont{author}
-      {
-            \insertauthor\\
-      }
+      \usebeamerfont{author}\insertauthor
     \end{beamercolorbox}
     \begin{beamercolorbox}[sep=8pt,center]{institute}
       \usebeamerfont{institute}\insertinstitute
@@ -104,7 +101,7 @@
 \title[期权知识分享]{关于期权的基础知识及套利过程}	%幻灯片标题
 \author[Zengyu Zeng]{曾锃煜}
 
-\institute[Hundsun]{资管研发四部}	%作者单位
+\institute[Hundsun]{资管，研发四部}	%作者单位
 \date{\today}
 
 \setcounter{tocdepth}{1}
@@ -128,125 +125,25 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{概述}
+\section{基本概念}
 
-\begin{frame}{研究背景}
-  \begin{block}{传统关系抽取}
-    \begin{itemize}
-      \item 优点：提取关系基于匹配规则，速度快
-      \item 缺点：规则需要预先定义，适用范围窄
-    \end{itemize}
-  \end{block}
-  \pause
-  \begin{block}{开放式关系抽取}
-    \begin{itemize}
-      \item 优点：应用范围广，只需要语料库作为输入数据即可进行处理
-      \item 缺点：初始信息少、语义类别难确定、依赖于训练语料
-    \end{itemize}
-  \end{block}
+\begin{frame}{期权定义}
+\end{frame}
+
+\begin{frame}{指数基金}
+\end{frame}
+
+\begin{frame}{中国市场的期权交易}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{中文开放式关系抽取实现方式}
+\section{套利}
 
-\begin{frame}{分词与依存句法分析}
-%   \epsfig{figure=figures/dependency.PNG,width=\textwidth}
-
-\end{frame}
-
-\begin{frame}{提取候选关系}
-%   \epsfig{figure=figures/sentence1.PNG,width=\textwidth}
+\begin{frame}{第一步}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{实验}
-
-\begin{frame}{评估标准}
-  \begin{description}
-    \item[精确率]<1-> $$Precision=\frac{|T|}{|A|}\times 100\%$$
-    \item[召回率]<2-> $$Recall=\frac{|T|}{|S|}\times 100\%$$
-    \item[F1 值]<3-> $$F1=\frac{2\times Precision\times Recall}{Precision+Recall}$$
-  \end{description}
-\end{frame}
-
-\begin{frame}{评估准备}
-%   \epsfig{figure=figures/result.PNG,width=\textwidth}
-  \begin{block}{人工标注关系文件}
-    \begin{itemize}
-      \item 中文文本语句内的关系数量
-      \item 谓词短语
-      \item 论元内容
-      \item 论元数目
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{评估程序}
-    \begin{enumerate}
-      \item 以语义模式重复频数阈值 $t^{sem}$ 作为自变量，运行中文开放式关系抽取系统处理语料库
-      \item 按语句将机器提取的关系与人工标注的关系进行比对并统计、输出数据
-    \end{enumerate}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{结果分析}
-
-\begin{frame}{ZORE 基于“燃规3”语料库的运行结果}
-  \begin{columns}
-    \begin{column}{0.70\textwidth}
-    %   \epsfig{figure=figures/performance.PNG,width=\textwidth}
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \begin{block}{结论}
-        体现了先前提及的对召回率 Recall 与精确度 Precision 的平衡性权衡，F1 值最大处关系抽取系统性能最好。
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{ZORE 与 DPM 基于“燃规3”语料库的运行结果对比}
-  \begin{columns}
-    \begin{column}{0.70\textwidth}
-    %   \epsfig{figure=figures/compare.PNG,width=\textwidth}
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \begin{block}{结论}
-        推断是是由于该语料库是法规，文本结构较为碎片化，以上下文环境进行分析的兼类词处理难以顺利工作导致的。
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{ZORE 与 DPM 基于“燃规3”语料库的运行结果对比}
-  \begin{columns}
-    \begin{column}{0.70\textwidth}
-    %   \epsfig{figure=figures/comparef.PNG,width=\textwidth}
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \begin{block}{结论}
-        可以推断缺少对兼类词处理不是 ZORE 算法提升性能所遇到的瓶颈。
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{错误分析}
-
-\begin{frame}{错误分析}
-  \begin{enumerate}
-    \item $t^{sem}$ 语义模式最低频率限制导致遗漏正确关系
-    \item 自然语言处理带来的错误，如将论元识别为“、构筑物”而不是“建、构筑物”
-    \item 关系模式选择错误，导致抽取出错误的关系
-  \end{enumerate}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \begin{frame}
 \centerline{\Large 谢谢!}
