@@ -258,9 +258,9 @@
       \begin{itemize}
         \item 公司维护
         \item 产品、单元维护
-        \item 组和维护
+        \item 组和维护，期权与标的为 1：1
         \item 资金账号
-        \item 股东维护
+        \item 股东维护，通过股东表查找资金账号
         \item 柜台同步
         \item 经纪商、柜台、营业部维护
         \item 费用维护
@@ -311,7 +311,7 @@
 \end{frame}
 
 \begin{frame}{风险控制}
-  包括保证金监控, 限仓监控, 限购, 限制，归档等操作流程。
+  包括保证金监控, 限仓监控, 限购, 限制，归档等操作流程。大部分为复用其他模块的风控逻辑，仅新增“期权保证金控制”。
 \end{frame}
 
 \begin{frame}{交易管理}
@@ -324,6 +324,14 @@
       \item 股东信息表 yh\_tstockholder
     \end{itemize}
   \end{block}
+\end{frame}
+
+\begin{frame}{交易管理}
+  \begin{block}{浮动盈亏}
+    $obligor = -1 \times a - cost$\\
+    $right = a - cost$
+  \end{block}
+  obligor：义务方；right：权利方；a = 持仓数量 $\times$ 合约乘数 $\times$ 最新价；cost = 开仓成本。
 \end{frame}
 
 \begin{frame}{交易管理}
@@ -342,7 +350,15 @@
 \end{frame}
 
 \begin{frame}{清算}
-  包括期权交易清算、行权清算、违约清算等内容。
+  包括期权交易清算、行权清算、违约清算等内容。\\
+  成本与盈亏将“认购”、“认沽”、“备兑”三者分开计算。
+  \begin{block}{成本}
+    \large{$cost = a \times (1 - \frac{sellAmount}{curAmount + sellAmount})$}\\
+  \end{block}
+  \begin{block}{盈亏}
+    \large{$profit = oriProfit + sellPrice - sellCost - sellAmount \times  \frac{a}{curAmount + sellAmount}$}
+  \end{block}
+  cost = 当前成本；profit = 当前累计收益；a = 期初成本 + 当日买入金额 + 买入费用；sellAmount = 卖出数量；curAmount = 当前数量；sellPrice = 卖出金额；sellCost = 卖出费用；oriProfit = 期初累计收益。
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
