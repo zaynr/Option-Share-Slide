@@ -59,7 +59,7 @@
 %  \vbox{}
   \vfill
   \begin{centering}
-  \includegraphics[height=2.0cm]{figure/hundsun-logo.png}
+  \includegraphics[height=1.0cm]{figure/hundsun-logo.png}
         \vskip0.6em\par%
     \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
       \usebeamerfont{title}\inserttitle\par%
@@ -237,9 +237,61 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{套利}
+\section{OPlus 系统期权模块}
 
-\begin{frame}{第一步}
+\begin{frame}{开户及基础信息维护}
+  \begin{columns}
+    \begin{column}{0.60\textwidth}
+      \epsfig{figure=figure/account-struct.PNG, width=\textwidth}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \begin{itemize}
+        \item 公司维护
+        \item 产品、单元维护
+        \item 组和维护
+        \item 资金账号
+        \item 股东维护
+        \item 柜台同步
+        \item 经纪商、柜台、营业部维护
+        \item 费用维护
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{开户及基础信息维护}
+  \begin{block}{委托方向}
+    \begin{itemize}
+      \item 买入开平仓
+      \item 卖出开平仓
+      \item 行权认购、行权认沽
+      \item 证券锁定、证券解锁
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{开户及基础信息维护}
+  \begin{columns}
+    \begin{column}{0.70\textwidth}
+      \begin{tabular}{ c | c | c | c }
+         & 经手费 & 结算费 & 过户费 \\
+        \hline
+        开平仓（含备兑） & $\sqrt{}$ & $\sqrt{}$ &  \\
+        \hline
+        行权及撤销 &  & $\sqrt{}$ & $\sqrt{}$ \\
+        \hline
+        锁定解锁 & & & \\
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \begin{itemize}
+        \item 日常结算费
+        \item 行权结算费
+        \item 期权经手费
+        \item 过户费（沪深不同，需特殊处理）
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
