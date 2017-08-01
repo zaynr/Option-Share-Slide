@@ -131,10 +131,26 @@
   \begin{itemize} %enumerate;description
     \item 约定价格（对赌）
     \item 权利金
+    \item 保证金
     \item 行使权利
-    \item 最后交易日、到期日、行权日、行权时间（30mins more）
+    \item 最后交易日、到期日、行权日、行权时间
     \item 交收日
   \end{itemize}
+\end{frame}
+
+\begin{frame}{期权定义}
+  \begin{block}{时间节点}
+    \begin{itemize}
+      \item 到期月的第四个星期三
+      \item 多出来的 30 分钟
+    \end{itemize}
+  \end{block}
+  \begin{block}{违约}
+    \begin{itemize}
+      \item 证券交收
+      \item 资金交收
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}{期权分类}
@@ -183,12 +199,20 @@
 \end{frame}
 
 \begin{frame}{中国期权交易}
+  \begin{block}{保证金计算}
+    \large{$deposit_{option} = max\{ premium + deposit_{futures} - \frac{void value}{2} , premium + \frac{deposit_{futures}}{2} \}$}\\
+    premium：权利金，void value：虚值
+  \end{block}
+  期权卖方需要在每个交易日末补足保证金，否则会被强制平仓。部分权利金也被放入保证金内。
+\end{frame}
+
+\begin{frame}{中国期权交易}
   国内目前有 ETF 期权与个股期权进行交易。此处以上证 50ETF 作为期权交易举例。标的即为 50ETF，Exchange Trading Fund。
   \begin{block}{上证 50 指数}
     \begin{enumerate}
       \item 50
       \item 加权
-      \item 算法：$$\frac{a \times b}{c}$$a = 实时加权股票净值, b = 基准指数, c = 基准日加权股票净值
+      \item 算法：$$\frac{a}{c} \times b$$a = 实时加权股票净值, b = 基准指数, c = 基准日加权股票净值
     \end{enumerate}
   \end{block}
 \end{frame}
@@ -204,14 +228,6 @@
   \begin{block}{交易类型}
     有六个类型，分别是“买入”、“卖出”、“备兑”的开仓与平仓。
   \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{保证金计算}
-    \large{$deposit_{option} = max\{ premium + deposit_{futures} - \frac{void value}{2} , premium + \frac{deposit_{futures}}{2} \}$}\\
-    premium：权利金，void value：虚值
-  \end{block}
-  期权卖方需要在每个交易日末补足保证金，否则会被强制平仓。部分权利金也被放入保证金内。
 \end{frame}
 
 \begin{frame}{中国期权交易}
@@ -327,9 +343,20 @@
 \end{frame}
 
 \begin{frame}{交易管理}
+  成本与盈亏将“认购”、“认沽”、“备兑”三者分开计算。
+  \begin{block}{累计成本}
+    \large{$cost = a \times (1 - \frac{sellAmount}{curAmount + sellAmount})$}\\
+  \end{block}
+  \begin{block}{累计收益}
+    \large{$profit = oriProfit + sellPrice - sellCost - a \times \frac{sellAmount}{curAmount + sellAmount}$}
+  \end{block}
+  a = 期初成本 + 当日买入金额 + 买入费用；cost = 当前成本；profit = 当前累计收益；sellAmount = 卖出数量；curAmount = 当前数量；sellPrice = 卖出金额；sellCost = 卖出费用；oriProfit = 期初累计收益。
+\end{frame}
+
+\begin{frame}{交易管理}
   \begin{block}{浮动盈亏}
-    $obligor = -1 \times a - cost$\\
-    $right = a - cost$
+    \large{$obligor = -1 \times a - cost$\\}
+    \large{$right = a - cost$}
   \end{block}
   obligor：义务方；right：权利方；a = 持仓数量 $\times$ 合约乘数 $\times$ 最新价；cost = 开仓成本。
 \end{frame}
@@ -351,14 +378,6 @@
 
 \begin{frame}{清算}
   包括期权交易清算、行权清算、违约清算等内容。\\
-  成本与盈亏将“认购”、“认沽”、“备兑”三者分开计算。
-  \begin{block}{成本}
-    \large{$cost = a \times (1 - \frac{sellAmount}{curAmount + sellAmount})$}\\
-  \end{block}
-  \begin{block}{盈亏}
-    \large{$profit = oriProfit + sellPrice - sellCost - sellAmount \times  \frac{a}{curAmount + sellAmount}$}
-  \end{block}
-  cost = 当前成本；profit = 当前累计收益；a = 期初成本 + 当日买入金额 + 买入费用；sellAmount = 卖出数量；curAmount = 当前数量；sellPrice = 卖出金额；sellCost = 卖出费用；oriProfit = 期初累计收益。
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
