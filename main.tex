@@ -98,7 +98,7 @@
 \usepackage{graphicx,psfrag}
 \usepackage{epsfig}
 
-\title[期权知识分享]{关于期权的基础知识及套利过程}	%幻灯片标题
+\title[期权知识分享]{关于期权的基础知识及 OPlus 模块介绍}	%幻灯片标题
 \author[Zengyu Zeng]{曾锃煜}
 
 \institute[Hundsun]{资管，研发四部}	%作者单位
@@ -274,6 +274,7 @@
   \begin{columns}
     \begin{column}{0.70\textwidth}
       \begin{tabular}{ c | c | c | c }
+        \hline
          & 经手费 & 结算费 & 过户费 \\
         \hline
         开平仓（含备兑） & $\sqrt{}$ & $\sqrt{}$ &  \\
@@ -281,6 +282,7 @@
         行权及撤销 &  & $\sqrt{}$ & $\sqrt{}$ \\
         \hline
         锁定解锁 & & & \\
+        \hline
       \end{tabular}
     \end{column}
     \begin{column}{0.30\textwidth}
@@ -304,7 +306,7 @@
       \item 期权委托表 jy\_toptentrust
       \item 期权成交表 jy\_toptrealdeal
       \item 现货组合持仓表 jy\_tunitstock，新增锁定标的字段
-      \item 股东信息表 yh\_tstockholder，因 UFT 不维护衍生品股东。
+      \item 股东信息表 yh\_tstockholder
     \end{itemize}
   \end{block}
 \end{frame}
