@@ -132,7 +132,8 @@
     \item 约定价格（对赌）
     \item 权利金
     \item 行使权利
-    \item 到期日、行权日、行权时间
+    \item 最后交易日、到期日、行权日、行权时间（30mins more）
+    \item 交收日
   \end{itemize}
 \end{frame}
 
@@ -206,6 +207,14 @@
 \end{frame}
 
 \begin{frame}{中国期权交易}
+  \begin{block}{保证金计算}
+    \large{$deposit_{option} = max\{ premium + deposit_{futures} - \frac{void value}{2} , premium + \frac{deposit_{futures}}{2} \}$}\\
+    premium：权利金，void value：虚值
+  \end{block}
+  期权卖方需要在每个交易日末补足保证金，否则会被强制平仓。部分权利金也被放入保证金内。
+\end{frame}
+
+\begin{frame}{中国期权交易}
   \begin{block}{备兑交易}
     \begin{enumerate}
       \item T 日：标的券锁定；备兑开仓
@@ -220,7 +229,7 @@
     \begin{enumerate}
       \item T 日：卖出开仓
       \item E 日：被行权；行权指派；收取需要被行权部分期权持仓保证金，其余保证金释放
-      \item E + 1 日：准备交收
+      \item E + 1 日：准备交收，ETF 为 E + 2
     \end{enumerate}
   \end{block}
 \end{frame}
@@ -230,7 +239,7 @@
     \begin{enumerate}
       \item T 日：标的券锁定；备兑开仓
       \item E 日：若不行权，则被平仓；若行权，则在 E + 1 日行权交收
-      \item E + 1 日：行权交收
+      \item E + 1 日：行权交收，ETF 为 E + 2
     \end{enumerate}
   \end{block}
 \end{frame}
@@ -240,6 +249,7 @@
 \section{OPlus 系统期权模块}
 
 \begin{frame}{开户及基础信息维护}
+  包括期权信息维护、期权类别信息、行情信息的维护。
   \begin{columns}
     \begin{column}{0.60\textwidth}
       \epsfig{figure=figure/account-struct.PNG, width=\textwidth}
@@ -268,6 +278,10 @@
       \item 证券锁定、证券解锁
     \end{itemize}
   \end{block}
+  \begin{block}{账号维护}
+    股东账号不区分衍生品，资金账号区分衍生品。\\
+    资金账号配置为个股期权，清算模式通过分仓通道区分。
+  \end{block}
 \end{frame}
 
 \begin{frame}{开户及基础信息维护}
@@ -289,7 +303,7 @@
       \begin{itemize}
         \item 日常结算费
         \item 行权结算费
-        \item 期权经手费
+        \item 期权经手费，股票 3 元，ETF 1.3 元
         \item 过户费（沪深不同，需特殊处理）
       \end{itemize}
     \end{column}
@@ -301,6 +315,7 @@
 \end{frame}
 
 \begin{frame}{交易管理}
+  主要是期权交易、行权、标的券锁定、解锁功能。指令交易和策略交易暂不支持。
   \begin{block}{涉及的表}
     \begin{itemize}
       \item 期权委托表 jy\_toptentrust
@@ -311,7 +326,21 @@
   \end{block}
 \end{frame}
 
+\begin{frame}{交易管理}
+  \begin{block}{下委托}
+    \begin{itemize}
+      \item 支持个股期权开平仓、标的券锁定解锁，期权行权委托
+      \item 开平仓及行权时前台传入期权组合， 锁定解锁传入标的组合
+      \item 行权时，价格类型为限价，价格为行权价。锁定解锁价格类型不为必传，价格传0
+    \end{itemize}
+  \end{block}
+  按委托序号撤单\\
+  异常撤单\\
+  撤补单\\
+\end{frame}
+
 \begin{frame}{清算}
+  包括期权交易清算、行权清算、违约清算等内容。
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
