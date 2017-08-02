@@ -201,8 +201,8 @@
 
 \begin{frame}{中国期权交易}
   \begin{block}{保证金计算}
-    \large{$deposit_{option} = max\{ premium + deposit_{futures} - \frac{void value}{2} , premium + \frac{deposit_{futures}}{2} \}$}\\
-    premium：权利金，void value：虚值
+    认购期权（short call） = 权利金前结算价 + Max\{21\% $\times$ 标的前收盘价 - 认购期权虚值，10\% $\times$ 标的前盘收盘价\} \\
+    认沽期权（short put） = Min\{权利金前结算价 + Max\{19\% $\times$ 标的前收盘价 - 认沽期权虚值，10\% $\times$ 行权价\}，行权价\}\\
   \end{block}
   期权卖方需要在每个交易日末补足保证金，否则会被强制平仓。部分权利金也被放入保证金内。
 \end{frame}
@@ -238,6 +238,12 @@
       \item E 日：被行权；行权指派；锁定需要行权的合约标的，其余释放
       \item E + 1 日：准备交收
     \end{enumerate}
+    \begin{itemize}
+      \item <1-> 锁定证券
+      \item <2-> 备兑开仓
+      \item <3-> 解锁证券
+      \item <4-> 备兑平仓
+    \end{itemize}
   \end{block}
 \end{frame}
 
@@ -258,6 +264,30 @@
       \item E 日：若不行权，则被平仓；若行权，则在 E + 1 日行权交收
       \item E + 1 日：行权交收，ETF 为 E + 2
     \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{中国期权交易}
+  \begin{block}{双向持仓}
+    \begin{itemize}
+      \item 盘中
+      \item 日终
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{中国期权交易}
+  \begin{block}{套利}
+    \begin{enumerate}
+      \item 隐含波动率
+      \item 卖出高估期权
+      \item 买入正常期权
+    \end{enumerate}
+  \end{block}
+  \pause
+  \begin{block}{隐含波动率}
+    $$\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2\frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV=0$$
+    V：期权价格，t：时间，S：标的券价格，r：无风险利率，$\sigma$就是隐含波动率，解该方程即可。
   \end{block}
 \end{frame}
 
@@ -343,6 +373,7 @@
       \item 资产信息表 jy\_tassetday
     \end{itemize}
   \end{block}
+  OPlus 系统的“期权属性表”没有包括“隐含波动率”字段，是否可以考虑加入？
 \end{frame}
 
 \begin{frame}{交易管理}
