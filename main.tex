@@ -126,301 +126,163 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{基本概念}
+\section{个股期权}
 
-\begin{frame}{期权定义}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{客户端下单}
+
+\begin{frame}{参数打包}
   \begin{itemize} %enumerate;description
-    \item 约定价格（对赌）
-    \item 权利金
-    \item 保证金
-    \item 行使权利
-    \item 最后交易日、到期日、行权日、行权时间
-    \item 交收日
+    \item 当前系统时间
+    \item 检查参数打包、去重
+    \begin{itemize}
+      \item 操作员权限 jy\_ooperator\_right\_check
+      \item 获取资金账号参数 jy\_ocapitalaccount\_get\_inparam
+      \item 业务规则 jy\_orulecheck\_get\_inparam
+      \item 产品权限 jy\_pubpermission
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{期权定义}
-  \begin{block}{时间节点}
+\begin{frame}{权限检查}
+  \begin{itemize}
+    \item 操作员权限 -- 单元、组合等
+    \item 组合权限
+    \item 业务规则
     \begin{itemize}
-      \item 到期月的第四个星期三
-      \item 多出来的 30 分钟
+      \item 期权属性
+      \item 委托数（拆单）
+      \item 交易时间
+      \item 产品交易权限
     \end{itemize}
-  \end{block}
-  \begin{block}{违约}
+    \item 资金账号 -- yh\_tassetcaptacct、yh\_tcapitalacctbiz
+    \item 柜台业务
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{UFT 入参}
+  \begin{enumerate}
+    \item 校验产品交易权限
+    \item 获取资金账号
+    \item 获取营业部、柜台
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{调用 UFR}
+  \begin{enumerate}
+    \item HsAdmin，去空格
+    \item 调用 UFR -- LS\_外部接口\_交易所混合业务\_委托批量下达
     \begin{itemize}
-      \item 证券交收
-      \item 资金交收
+      \item 记录错误
+      \item 记录委托明细
+      \item 记录风控明细
+      \item 记录风控触警
+      \item 记录委托下单明细（包括合规） -- 调用 UFT 下单
+      \item 记录委托出参
     \end{itemize}
-  \end{block}
+  \item 风控触警落库
+  \end{enumerate}
 \end{frame}
 
-\begin{frame}{期权分类}
-  \begin{block}{买卖方向}
+\begin{frame}{调用 UFT 下单}
+  \begin{enumerate}
+    \item 调用 UFT -- LS\_股票期权交易\_下单
     \begin{itemize}
-      \item 认购期权
-      \item 认沽期权
+      \item 记录回滚委托号
+      \item 记录成功委托号
+      \item 打包委托出参明细
     \end{itemize}
-  \end{block}
-  \begin{block}{期权内涵价值}
+    \item 若存在失败委托或 UFT 调用失败，全部回滚 -- LS\_委托公共\_UFT委托失败\_回滚
+    \item 发消息
     \begin{itemize}
-      \item 实值期权
-      \item 虚值期权
-      \item 平值期权
+      \item 异步落库：期权委托表、现货持仓表、资产表。
+      \item 客户端
+      \item 报盘
     \end{itemize}
-  \end{block}
+  \end{enumerate}
 \end{frame}
 
-\begin{frame}{中国期权交易}
-  \begin{block}{期权合约}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{UFR 风控}
+
+\begin{frame}{委托下达}
+  \begin{enumerate}
+    \item 下委托，更新业务
     \begin{itemize}
-      \item 合约单位（股票、ETF）
-      \item 报价单位（股票一厘、ETF十分之一厘）
-      \item 合约编码（身份证）
-      \begin{itemize}
-        \item 股票 10000001
-        \item ETF 90000001
-      \end{itemize}
-      \item 合约代码（600570|C|1708|M|00380）
-      \item 合约简称（恒生电子|购|八月|380）
+      \item 触犯禁止：废单（状态、挂单、失效、废单原因）
+      \item 成功：合规调用
+      \item 全失败：回滚
     \end{itemize}
-  \end{block}
+  \end{enumerate}
 \end{frame}
 
-\begin{frame}{中国期权交易}
-  \begin{block}{衍生品合约账户}
-    \begin{itemize}
-      \item 记录合约持仓
-      \item 期权交易申报
-      \item 行权申报
-    \end{itemize}
-    不可用于存放现货证券，行权的交割标的物通过普通证券账户完成。
-  \end{block}
-  \begin{block}{衍生品保证金账户}
-    \begin{itemize}
-      \item 权利金
-      \item 卖方保证金
-      \item 行权资金交收
-    \end{itemize}
-  \end{block}
+\begin{frame}{下委托，更新业务}
+
 \end{frame}
 
-\begin{frame}{中国期权交易}
-  \begin{block}{保证金计算}
-    认购期权（short call） = 权利金前结算价 + Max\{21\% $\times$ 标的前收盘价 - 认购期权虚值，10\% $\times$ 标的前盘收盘价\} \\
-    \noindent\rule{4cm}{0.4pt}\\
-    认沽期权（short put） = Min\{权利金前结算价 + Max\{19\% $\times$ 标的前收盘价 - 认沽期权虚值，10\% $\times$ 行权价\}，行权价\}\\
-  \end{block}
-  期权卖方需要在每个交易日末补足保证金，否则会被强制平仓。部分权利金也被放入保证金内。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{UFT 下委托}
+
+\begin{frame}{下委托}
+  \begin{enumerate}
+    \item 下单
+    \item 计算委托金额
+    \item 回滚 -- 全部失败，或小于最小委托比例
+    \item 补单
+  \end{enumerate}
 \end{frame}
 
-\begin{frame}{中国期权交易}
-  国内目前有 ETF 期权与个股期权进行交易。此处以上证 50ETF 作为期权交易举例。标的即为 50ETF，Exchange Trading Fund。
-  \begin{block}{上证 50 指数}
-    \begin{enumerate}
-      \item 50
-      \item 加权
-      \item 算法：$$\frac{a}{c} \times b$$a = 实时加权股票净值, b = 基准指数, c = 基准日加权股票净值
-    \end{enumerate}
-  \end{block}
+\begin{frame}{下单}
+  \begin{enumerate}
+    \item 维护询价
+    \item 计算费用、委托价格
+    \item 持仓维护（unitStock）
+    \item 实例持仓维护
+    \item 状态维护 -- 已报（补单）、正报
+    \item 更新 委托关系表、期权委托表
+    \item 更新可用 -- 保证金、标的券
+  \end{enumerate}
 \end{frame}
 
-\begin{frame}{中国期权交易}
-  \begin{block}{50ETF}
-    \begin{itemize}
-      \item 指数基金
-      \item 上证 50 指数
-      \item 交易成本
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{交易类型}
-    有六个类型，分别是“买入”、“卖出”、“备兑”的开仓与平仓。
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{备兑交易}
-    \begin{enumerate}
-      \item T 日：标的券锁定；备兑开仓
-      \item E 日：被行权；行权指派；锁定需要行权的合约标的，其余释放
-      \item E + 1 日：准备交收
-    \end{enumerate}
-    \begin{itemize}
-      \item <1-> 锁定证券
-      \item <2-> 备兑开仓
-      \item <3-> 解锁证券
-      \item <4-> 备兑平仓
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{卖出交易}
-    \begin{enumerate}
-      \item T 日：卖出开仓
-      \item E 日：被行权；行权指派；收取需要被行权部分期权持仓保证金，其余保证金释放
-      \item E + 1 日：准备交收，ETF 为 E + 2
-    \end{enumerate}
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{买入交易}
-    \begin{enumerate}
-      \item T 日：标的券锁定；备兑开仓
-      \item E 日：若不行权，则被平仓；若行权，则在 E + 1 日行权交收
-      \item E + 1 日：行权交收，ETF 为 E + 2
-    \end{enumerate}
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{双向持仓}
-    \begin{itemize}
-      \item 盘中
-      \item 日终
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{中国期权交易}
-  \begin{block}{套利}
-    \begin{enumerate}
-      \item 隐含波动率
-      \item 卖出高估期权
-      \item 买入正常期权
-    \end{enumerate}
-  \end{block}
-  \pause
-  \begin{block}{隐含波动率}
-    $$\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2\frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV=0$$
-    V：期权价格，t：时间，S：标的券价格，r：无风险利率，$\sigma$就是隐含波动率，解该方程即可。
-  \end{block}
+\begin{frame}{计算委托金额}
+  仅计算上交所、深交所的委托金额，其他的都是 0。
+  \begin{enumerate}
+    \item 获取价格P（市价、限价）
+    \item 委托金额 = P $\times$ 合约数 $\times$ 合约单位
+    \item 分别计算 成功期权总金额S、总金额T
+    \item 计算 期权最小比例 = $\frac{S}{T}$，用于判断是否回滚
+  \end{enumerate}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{OPlus 系统期权模块}
+\section{商品期权}
 
-\begin{frame}{开户及基础信息维护}
-  包括期权信息维护、期权类别信息、行情信息的维护。
-  \begin{columns}
-    \begin{column}{0.60\textwidth}
-      \epsfig{figure=figure/account-struct.PNG, width=\textwidth}
-    \end{column}
-    \begin{column}{0.40\textwidth}
-      \begin{itemize}
-        \item 公司维护
-        \item 产品、单元维护
-        \item 组和维护，期权与标的为 1：1
-        \item 资金账号
-        \item 股东维护，通过股东表查找资金账号
-        \item 柜台同步
-        \item 经纪商、柜台、营业部维护
-        \item 费用维护
-      \end{itemize}
-    \end{column}
-  \end{columns}
+\begin{frame}{}
 \end{frame}
 
-\begin{frame}{开户及基础信息维护}
-  \begin{block}{委托方向}
-    \begin{itemize}
-      \item 买入开平仓
-      \item 卖出开平仓
-      \item 行权认购、行权认沽
-      \item 证券锁定、证券解锁
-    \end{itemize}
-  \end{block}
-  \begin{block}{账号维护}
-    股东账号不区分衍生品，资金账号区分衍生品。\\
-    资金账号配置为个股期权，清算模式通过分仓通道区分。
-  \end{block}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{客户端下单}
+
+\begin{frame}{}
 \end{frame}
 
-\begin{frame}{开户及基础信息维护}
-  \begin{columns}
-    \begin{column}{0.70\textwidth}
-      \begin{tabular}{ c | c | c | c }
-        \hline
-         & 经手费 & 结算费 & 过户费 \\
-        \hline
-        开平仓（含备兑） & $\sqrt{}$ & $\sqrt{}$ &  \\
-        \hline
-        行权及撤销 &  & $\sqrt{}$ & $\sqrt{}$ \\
-        \hline
-        锁定解锁 & & & \\
-        \hline
-      \end{tabular}
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \begin{itemize}
-        \item 日常结算费
-        \item 行权结算费
-        \item 期权经手费，股票 3 元，ETF 1.3 元
-        \item 过户费（沪深不同，需特殊处理）
-      \end{itemize}
-    \end{column}
-  \end{columns}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{UFR 风控}
+
+\begin{frame}{}
 \end{frame}
 
-\begin{frame}{风险控制}
-  包括保证金监控, 限仓监控, 限购, 限制，归档等操作流程。大部分为复用其他模块的风控逻辑，仅新增“期权保证金控制”。
-\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{交易管理}
-  主要是期权交易、行权、标的券锁定、解锁功能。指令交易和策略交易暂不支持。
-  \begin{block}{涉及的表}
-    \begin{itemize}
-      \item 期权委托表 jy\_toptentrust
-      \item 期权成交表 jy\_toptrealdeal
-      \item 现货组合持仓表 jy\_tunitstock，新增锁定标的字段
-      \item 现货产品持仓表 jy\_tfundstock
-      \item 股东信息表 yh\_tstockholder
-      \item 资产信息表 jy\_tassetday
-    \end{itemize}
-  \end{block}
-  OPlus 系统的“期权属性表”没有包括“隐含波动率”字段，是否可以考虑加入？
-\end{frame}
+\subsection{UFT 下单}
 
-\begin{frame}{交易管理}
-  成本与盈亏将“认购”、“认沽”、“备兑”三者分开计算。
-  \begin{block}{累计成本}
-    \large{$cost = a \times (1 - \frac{sellAmount}{curAmount + sellAmount})$}\\
-  \end{block}
-  \begin{block}{累计收益}
-    \large{$profit = oriProfit + sellPrice - sellCost - a \times \frac{sellAmount}{curAmount + sellAmount}$}
-  \end{block}
-  a = 期初成本 + 当日买入金额 + 买入费用；cost = 当前成本；profit = 当前累计收益；sellAmount = 卖出数量；curAmount = 当前数量；sellPrice = 卖出金额；sellCost = 卖出费用；oriProfit = 期初累计收益。
-\end{frame}
-
-\begin{frame}{交易管理}
-  \begin{block}{浮动盈亏}
-    \large{$obligor = -1 \times a - cost$\\}
-    \large{$right = a - cost$}
-  \end{block}
-  a = 持仓数量 $\times$ 合约乘数 $\times$ 最新价；obligor：义务方；right：权利方；cost = 开仓成本。
-\end{frame}
-
-\begin{frame}{交易管理}
-  \begin{block}{下委托}
-    \begin{itemize}
-      \item 支持个股期权开平仓、标的券锁定解锁，期权行权委托
-      \item 开平仓及行权时前台传入期权组合， 锁定解锁传入标的组合
-      \item 行权时，价格类型为限价，价格为行权价。锁定解锁价格类型不为必传，价格传0
-    \end{itemize}
-  \end{block}
-  \begin{itemize}
-    \item 按委托序号撤单
-    \item 异常撤单
-    \item 撤补单
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{清算}
-  包括期权交易清算、行权清算、违约清算等内容。\\
+\begin{frame}{}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
