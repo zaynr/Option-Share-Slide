@@ -9,12 +9,12 @@
 %\usetheme{Berlin}
 %\usetheme{Boadilla}
 %\usetheme{CambridgeUS}
-\usetheme{Copenhagen}
+% \usetheme{Copenhagen}
 %\usetheme{Darmstadt}
 %\usetheme{Dresden}
 %\usetheme{Frankfurt}
 %\usetheme{Goettingen}
-%\usetheme{Hannover}
+% \usetheme{Hannover}
 %\usetheme{Ilmenau}
 %\usetheme{JuanLesPins}
 %\usetheme{Luebeck}
@@ -23,9 +23,9 @@
 %\usetheme{Malmoe}
 %\usetheme{Marburg}
 %\usetheme{Montpellier}
-%\usetheme{PaloAlto}
+% \usetheme{PaloAlto}
 %\usetheme{Pittsburgh}
-%\usetheme{Rochester}
+\usetheme{Rochester}
 %\usetheme{Singapore}
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
@@ -101,21 +101,20 @@
 
 \title[期权知识分享]{期权基础知识及 OPlus 模块介绍}	%幻灯片标题
 \author[Zengyu Zeng]{曾锃煜}
-
 \institute[Hundsun]{资管，研发四部}	%作者单位
 \date{\today}
 
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{4}
 
 \begin{document}
 \begin{frame}
 \titlepage
 \end{frame}
 
-\AtBeginSection[]{
+\AtBeginSubsection[]{
   \frame{
     \frametitle{大纲}
-    \tableofcontents[currentsection]
+    \tableofcontents[currentsection, currentsubsection]
   }
 }
 
@@ -211,7 +210,6 @@
   \begin{enumerate}
     \item 下委托，更新业务
     \begin{itemize}
-      \item 触犯禁止：废单（状态、挂单、失效、废单原因）
       \item 成功：合规调用
       \item 全失败：回滚
     \end{itemize}
@@ -219,7 +217,30 @@
 \end{frame}
 
 \begin{frame}{下委托，更新业务}
+  \begin{enumerate}
+    \item 更新 合规调用表
+    \item 下委托
+    \begin{enumerate}
+      \item 校验数据
+      \item 根据业务类型 trade\_logic\_id 下委托，更新持仓、可用
+      \item 更新 委托 -- 申报 关系表
+    \end{enumerate}
+    \item 若一笔失败，则全失败
+  \end{enumerate}
+\end{frame}
 
+\begin{frame}{合规调用}
+  \begin{enumerate}
+    \item 合规计算
+    \begin{enumerate}
+      \item 获取合规上下文
+      \item 根据 调用表、上下文 计算
+    \end{enumerate}
+    \item 计算触犯金额
+    \item 判断触犯比例占总比例
+    \item 触犯禁止：废单（可用、委托状态）
+    \item 若全失败，回滚
+    \end{enumerate}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
